@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Analyse systémique du domaine skiable d'Arosa Lenzerheide (Grisons, CH) dans le cadre de l'économie du Doughnut de Kate Raworth. Projet ENV-101, EPFL, printemps 2026.">
+<title>Arosa Lenzerheide — Analyse Doughnut · ENV-101 · EPFL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1F4E79;
+    --navy-dark: #163758;
+    --navy-tint: #E8EEF5;
+    --white: #F5F5F5;
+    --paper: #FAFAF7;
+    --glacier: #4BACC6;
+    --glacier-tint: #DDEEF3;
+    --amber: #E8A020;
+    --amber-tint: #FBEFD6;
+    --ink: #111111;
+    --ink-2: #333333;
+    --ink-3: #6B6B6B;
+    --rule: #D8D8D5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 48px 56px 96px; }
+
+  /* Accessibilité */
+  :focus { outline: none; }
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+  .donut-seg:focus-visible { outline-offset: 1px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+  .skip-link {
+    position: absolute; left: -9999px;
+    background: var(--navy); color: white;
+    padding: 8px 14px; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; text-decoration: none;
+    top: 8px; z-index: 200;
+  }
+  .skip-link:focus { left: 8px; }
+
+  /* HEADER */
+  header.top {
+    display: grid; grid-template-columns: 1fr auto; gap: 32px;
+    align-items: end;
+    padding: 32px 0 28px;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 56px;
+    background: linear-gradient(180deg, rgba(31,78,121,0.025) 0%, rgba(31,78,121,0) 100%);
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 52px;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0 0 14px;
+    color: var(--navy);
+    max-width: 900px;
+  }
+  h1 em { font-style: normal; color: var(--ink); }
+  .deck {
+    font-size: 17px;
+    color: var(--ink-2);
+    max-width: 760px;
+    font-weight: 400;
+    line-height: 1.55;
+  }
+  .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    text-align: right;
+    line-height: 1.8;
+  }
+  .meta strong { color: var(--ink); font-weight: 500; }
+
+  /* Barre d'outils */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .tool-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 12px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tool-btn:hover, .tool-btn:focus-visible {
+    border-color: var(--navy);
+    color: var(--navy);
+    background: white;
+  }
+
+  /* Avertissement méthodologique */
+  .method-note {
+    margin-top: 20px;
+    padding: 10px 14px;
+    background: var(--amber-tint);
+    border-left: 3px solid var(--amber);
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.5;
+    max-width: 900px;
+  }
+  .method-note strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  /* SECTION */
+  section {
+    margin-bottom: 88px;
+    scroll-margin-top: 20px;
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 24px;
+    align-items: baseline;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--glacier);
+    letter-spacing: 0.1em;
+    padding-top: 8px;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--navy);
+    margin: 0 0 8px;
+    line-height: 1.15;
+  }
+  .section-sub {
+    font-size: 14.5px;
+    color: var(--ink-3);
+    max-width: 680px;
+    line-height: 1.55;
+  }
+
+  /* DOUGHNUT */
+  .doughnut-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 48px;
+    align-items: start;
+  }
+  .doughnut-controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .doughnut-controls .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-right: 6px;
+  }
+  .filter-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 6px 11px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn:focus-visible {
+    border-color: var(--navy);
+    color: var(--navy);
+  }
+  .filter-btn.active {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+  .doughnut-wrap {
+    position: relative;
+    aspect-ratio: 1;
+    width: 100%;
+  }
+  .doughnut-wrap svg { width: 100%; height: 100%; display: block; }
+  .donut-seg { cursor: pointer; transition: opacity 0.2s, transform 0.2s; transform-origin: center; transform-box: fill-box; }
+  .donut-seg:hover { opacity: 0.75; }
+  .donut-seg.active { opacity: 1; }
+  .donut-seg.dim { opacity: 0.25; }
+  .donut-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 8.5px;
+    fill: var(--ink-2);
+    font-weight: 500;
+    pointer-events: none;
+    letter-spacing: 0.02em;
+  }
+  .donut-label.linked { fill: white; font-weight: 600; }
+  .donut-center-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--ink-3);
+    text-anchor: middle;
+    letter-spacing: 0.08em;
+  }
+  .donut-center-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    fill: var(--navy);
+    text-anchor: middle;
+    font-weight: 600;
+  }
+  .ring-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    fill: var(--ink-3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .detail-card {
+    border: 1px solid var(--rule);
+    background: var(--white);
+    padding: 24px;
+    min-height: 420px;
+    position: relative;
+  }
+  .detail-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+  }
+  .detail-nav button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .detail-nav button:hover, .detail-nav button:focus-visible {
+    border-color: var(--navy);
+    color: var(--navy);
+  }
+  .detail-nav button:disabled {
+    opacity: 0.35; cursor: not-allowed;
+  }
+  .detail-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border: 1px solid currentColor;
+    margin-bottom: 16px;
+  }
+  .detail-tag.ceiling { color: var(--amber); }
+  .detail-tag.foundation { color: var(--glacier); }
+  .detail-tag.linked { background: var(--navy); color: white; border-color: var(--navy); }
+  .detail-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--navy);
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .detail-quant {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .detail-body { font-size: 14px; color: var(--ink-2); line-height: 1.6; }
+  .detail-body p { margin: 0 0 12px; }
+  .detail-cite {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+  .detail-link-note {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--navy-tint);
+    font-size: 12px;
+    color: var(--navy-dark);
+    border-left: 2px solid var(--navy);
+  }
+
+  /* SYSTEMS DIAGRAM */
+  .systems-wrap {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    padding: 40px 32px 24px;
+    position: relative;
+  }
+  .systems-svg { width: 100%; height: 520px; display: block; }
+  .stock-node { cursor: pointer; }
+  .stock-node rect {
+    fill: white;
+    stroke: var(--navy);
+    stroke-width: 1.5;
+    transition: stroke-width 0.2s, filter 0.2s;
+  }
+  .stock-node:hover rect {
+    stroke-width: 2.5;
+  }
+  .stock-node.highlight rect {
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 6px rgba(232,160,32,0.35));
+  }
+  .stock-node.warming rect { stroke: var(--amber); }
+  .stock-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    fill: var(--navy);
+  }
+  .stock-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    fill: var(--ink-3);
+  }
+  .stock-bar {
+    fill: var(--glacier);
+    transition: fill 0.4s, width 0.4s;
+  }
+  .stock-bar.warm { fill: var(--amber); }
+  .flow-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--ink-2);
+    letter-spacing: 0.02em;
+  }
+  .flow-path {
+    fill: none;
+    stroke-width: 1.5;
+    transition: stroke-width 0.2s, opacity 0.2s;
+  }
+  .flow-path.reinforcing { stroke: var(--amber); }
+  .flow-path.balancing { stroke: var(--glacier); }
+  .flow-path.neutral { stroke: var(--ink-2); }
+  .flow-path.highlight { stroke-width: 3; }
+  .loop-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  @keyframes dash {
+    to { stroke-dashoffset: -20; }
+  }
+  .flow-animated {
+    stroke-dasharray: 4 4;
+    animation: dash 1.2s linear infinite;
+  }
+  /* Flux renforçants : plus rapides (urgence) */
+  .flow-path.reinforcing.flow-animated {
+    animation-duration: 0.8s;
+  }
+  /* Flux équilibrants : plus lents (régulation) */
+  .flow-path.balancing.flow-animated {
+    animation-duration: 1.6s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flow-animated { animation: none; stroke-dasharray: 4 4; }
+  }
+  .legend-row {
+    display: flex;
+    gap: 28px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--ink-2);
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-swatch { width: 24px; height: 2px; }
+  .legend-swatch.dashed { background: repeating-linear-gradient(to right, currentColor 0, currentColor 4px, transparent 4px, transparent 8px); height: 2px; }
+
+  /* TIMELINE */
+  .timeline-wrap {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    padding: 32px;
+  }
+  .timeline-header {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .kpi .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .kpi .value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi .value .unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink-3);
+    margin-left: 4px;
+  }
+  .kpi .value.warn { color: var(--amber); }
+  .kpi .delta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .chart-svg { width: 100%; height: 300px; display: block; }
+  .axis-line { stroke: var(--rule); stroke-width: 1; }
+  .axis-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--ink-3); }
+  .grid-line { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 2 3; }
+  .line-natural { fill: none; stroke: var(--glacier); stroke-width: 2; }
+  .line-artificial { fill: none; stroke: var(--amber); stroke-width: 2; }
+  .line-temp { fill: none; stroke: var(--navy); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .area-natural { fill: var(--glacier); opacity: 0.1; }
+  .area-artificial { fill: var(--amber); opacity: 0.1; }
+  .area-tipping { fill: var(--amber); opacity: 0.06; }
+  .year-marker { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; }
+  .milestone-marker { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 4; opacity: 0.5; }
+  .milestone-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    fill: var(--ink-3);
+    letter-spacing: 0.05em;
+  }
+  .year-dot { fill: var(--navy); }
+
+  .dynamic-comment {
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: var(--navy-tint);
+    border-left: 3px solid var(--navy);
+    font-size: 13px;
+    color: var(--navy-dark);
+    line-height: 1.5;
+    min-height: 44px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .dynamic-comment.warning {
+    background: var(--amber-tint);
+    border-left-color: var(--amber);
+    color: #8B5E10;
+  }
+  .dynamic-comment .dc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-right: 8px;
+    opacity: 0.8;
+  }
+
+  .slider-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .slider-row .yr-current {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(to right, var(--glacier) 0%, var(--amber) 100%);
+    border-radius: 0;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--navy);
+    border-radius: 50%;
+    margin-top: -6px;
+    border: 3px solid white;
+    box-shadow: 0 0 0 1px var(--navy);
+  }
+  input[type=range]::-moz-range-track {
+    height: 4px;
+    background: linear-gradient(to right, var(--glacier) 0%, var(--amber) 100%);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--navy);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 1px var(--navy);
+  }
+  .yr-scale {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    margin-top: 4px;
+  }
+  .ctrl-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 8px 14px;
+    border: 1px solid var(--navy);
+    background: white;
+    color: var(--navy);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .ctrl-btn:hover { background: var(--navy); color: white; }
+  .ctrl-btn.playing { background: var(--navy); color: white; }
+
+  /* TOOLTIP */
+  .tip {
+    position: fixed;
+    z-index: 100;
+    background: var(--ink);
+    color: white;
+    padding: 12px 14px;
+    max-width: 280px;
+    font-size: 12px;
+    line-height: 1.5;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -100%) translateY(-8px);
+    transition: opacity 0.15s;
+  }
+  .tip.flip-down {
+    transform: translate(-50%, 0) translateY(16px);
+  }
+  .tip.visible { opacity: 1; }
+  .tip .tip-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .tip .tip-src {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #aaa;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #444;
+  }
+
+  /* ENERGY PROFILE */
+  .energy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .energy-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    padding: 28px;
+  }
+  .energy-card h4 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .energy-card .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+  .stacked-bar {
+    display: flex;
+    height: 36px;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  .stacked-bar div {
+    position: relative;
+    cursor: pointer;
+    transition: filter 0.15s;
+  }
+  .stacked-bar div:hover { filter: brightness(1.1); }
+  .bar-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .bar-legend .row {
+    display: grid;
+    grid-template-columns: 12px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .bar-legend .sw { width: 12px; height: 12px; }
+  .bar-legend .pc { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3); }
+
+  /* DATA POINTS CITE */
+  .cite-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .cite-card {
+    border-top: 2px solid var(--navy);
+    padding: 16px 0 0;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .cite-card:hover { border-color: var(--amber); }
+  .cite-card .fig {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .cite-card:hover .fig { color: var(--amber); }
+  .cite-card .lbl {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+  }
+  .cite-card .src {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+  }
+
+  /* MÉTHODE (section 4) */
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .method-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--navy);
+    padding: 24px;
+  }
+  .method-card h4 {
+    margin: 0 0 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .method-card p {
+    margin: 0 0 10px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+  }
+  .method-card ul {
+    margin: 0; padding-left: 18px;
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .method-card ul li { margin-bottom: 4px; }
+  .method-card .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--glacier);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* BIBLIOGRAPHIE */
+  .biblio {
+    margin-top: 32px;
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 28px 32px;
+  }
+  .biblio h4 {
+    margin: 0 0 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.005em;
+  }
+  .biblio ol {
+    margin: 0; padding-left: 22px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    counter-reset: bib;
+  }
+  .biblio ol li {
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+  .biblio em { color: var(--ink); font-style: italic; }
+  .biblio a {
+    color: var(--navy);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--glacier);
+  }
+  .biblio a:hover { color: var(--amber); border-bottom-color: var(--amber); }
+
+  /* FOOTER */
+  footer.bot {
+    margin-top: 72px;
+    padding-top: 32px;
+    border-top: 1px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--ink-3);
+    line-height: 1.8;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+  }
+  footer.bot a { color: var(--navy); text-decoration: none; }
+  .refs { max-width: 720px; }
+  .refs strong { color: var(--ink); font-weight: 500; }
+
+  /* PRÉSENTATION (plein écran section par section) */
+  body.presentation-mode .wrap { max-width: none; padding: 40px 56px; }
+  body.presentation-mode section { min-height: calc(100vh - 80px); }
+  body.presentation-mode header.top,
+  body.presentation-mode footer.bot,
+  body.presentation-mode .biblio,
+  body.presentation-mode #methode { display: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 980px) {
+    .wrap { padding: 24px 20px 60px; }
+    h1 { font-size: 34px; }
+    .section-title { font-size: 22px; }
+    .deck { font-size: 15px; }
+    header.top { grid-template-columns: 1fr; gap: 18px; }
+    .meta { text-align: left; }
+    .toolbar { justify-content: flex-start; }
+    .doughnut-grid { grid-template-columns: 1fr; }
+    .energy-grid { grid-template-columns: 1fr; }
+    .timeline-header { grid-template-columns: repeat(2, 1fr); }
+    .cite-row { grid-template-columns: 1fr; }
+    .method-grid { grid-template-columns: 1fr; }
+    .donut-label { font-size: 10px; }
+  }
+
+  /* PRINT */
+  @media print {
+    @page { margin: 14mm; }
+    body { background: white; color: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .wrap { max-width: none; padding: 0; }
+    header.top { break-after: avoid; margin-bottom: 28px; padding-top: 0; background: none; }
+    section { break-inside: avoid-page; margin-bottom: 36px; }
+    .toolbar, .slider-row, .doughnut-controls, .detail-nav { display: none !important; }
+    .flow-animated { animation: none !important; }
+    .tip { display: none !important; }
+    .biblio { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#doughnut" class="skip-link">Aller au contenu principal</a>
+
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <div class="eyebrow">ENV-101 · Étude de cas · Durabilité alpine</div>
+      <h1><em>Arosa Lenzerheide</em> — un domaine skiable suisse dans le Doughnut</h1>
+      <p class="deck">Analyse systémique de la gestion énergétique et des ressources d'une station de sports d'hiver des Grisons (225 km de pistes, 1 229 – 2 865 m), à la lumière du cadre de l'économie du Doughnut de Kate Raworth.</p>
+      <div class="method-note">
+        <strong>Note méthodologique</strong> Certains indicateurs numériques de cette infographie sont des <em>estimations pédagogiques</em> calibrées à partir des ordres de grandeur publiés (CH2018, Rixen et al. 2011, Seilbahnen Schweiz). La trajectoire 2010–2050 est une courbe lissée illustrative fondée sur les messages clés du scénario RCP 4.5 et non sur une simulation. Voir section <a href="#methode" style="color:var(--amber); border-bottom:1px dotted var(--amber); text-decoration:none;">04 / Méthode</a>.
+      </div>
+    </div>
+    <div>
+      <div class="meta">
+        <div><strong>Région</strong> &nbsp; Grisons · CH</div>
+        <div><strong>Altitude</strong> &nbsp; 1 229 – 2 865 m</div>
+        <div><strong>Pistes</strong> &nbsp; 225 km (117 pistes)</div>
+        <div><strong>Remontées</strong> &nbsp; 43 installations</div>
+        <div><strong>Lits tour.</strong> &nbsp; ≈ 30 000</div>
+        <div><strong>Cadre</strong> &nbsp; Raworth 2017</div>
+      </div>
+      <div class="toolbar" role="toolbar" aria-label="Outils du document">
+        <button class="tool-btn" id="btn-print" title="Imprimer ou exporter en PDF">▤ Imprimer · PDF</button>
+        <button class="tool-btn" id="btn-csv" title="Télécharger les données de projection (CSV)">↓ Données CSV</button>
+        <button class="tool-btn" id="btn-present" title="Mode présentation (touche F)">▶ Présentation</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION 1 : DOUGHNUT -->
+  <section id="doughnut">
+    <div class="section-head">
+      <div class="section-num">01 / DOUGHNUT</div>
+      <div>
+        <h2 class="section-title">Le domaine skiable dans l'espace juste et sûr</h2>
+        <p class="section-sub">Cliquez ou tabulez sur un segment pour explorer les dimensions du plafond écologique et du plancher social. Trois dimensions (surlignées) sont structurellement liées à l'exploitation du domaine skiable.</p>
+      </div>
+    </div>
+
+    <div class="doughnut-controls" role="group" aria-label="Filtre d'affichage">
+      <span class="label">Filtre</span>
+      <button class="filter-btn active" data-filter="all">Toutes dimensions</button>
+      <button class="filter-btn" data-filter="linked">Liens structurels seulement</button>
+      <button class="filter-btn" data-filter="ceiling">Plafond écologique</button>
+      <button class="filter-btn" data-filter="foundation">Plancher social</button>
+    </div>
+
+    <div class="doughnut-grid">
+      <div class="doughnut-wrap">
+        <svg id="doughnut-svg" viewBox="-260 -260 520 520" role="img" aria-label="Diagramme du Doughnut : anneau extérieur plafond écologique (9 dimensions), anneau intérieur plancher social (12 dimensions)"></svg>
+      </div>
+      <aside id="detail-card" class="detail-card" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <!-- SECTION 2 : SYSTÈME -->
+  <section id="systeme">
+    <div class="section-head">
+      <div class="section-num">02 / SYSTÈME</div>
+      <div>
+        <h2 class="section-title">Stocks, flux et boucles de rétroaction</h2>
+        <p class="section-sub">Quatre stocks définissent la dynamique du domaine. Les flux entre ces stocks produisent une boucle de renforcement (R) climatique et une boucle d'équilibrage (B) opérationnelle.</p>
+      </div>
+    </div>
+
+    <div class="systems-wrap">
+      <svg class="systems-svg" id="systems-svg" viewBox="0 0 1200 520"></svg>
+
+      <div class="legend-row">
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--amber)"></span> Flux renforçant (R)</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--glacier)"></span> Flux équilibrant (B)</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--ink-2)"></span> Flux neutre</div>
+        <div class="legend-item"><span class="legend-swatch dashed" style="color:var(--ink-2)"></span> Flux animé = actif</div>
+        <div class="legend-item"><span style="width:16px;height:16px;border:1.5px solid var(--navy);display:inline-block"></span> Stock (accumulation)</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3 : TIMELINE -->
+  <section id="timeline">
+    <div class="section-head">
+      <div class="section-num">03 / TRAJECTOIRE</div>
+      <div>
+        <h2 class="section-title">Neige naturelle vs. enneigement technique, 2010 → 2050</h2>
+        <p class="section-sub">Projection fondée sur les scénarios RCP 4.5 pour les Alpes suisses (OFEV / MétéoSuisse, CH2018). Déplacez le curseur ou lancez la lecture pour observer l'évolution des indicateurs clés.</p>
+      </div>
+    </div>
+
+    <div class="timeline-wrap">
+      <div class="timeline-header">
+        <div class="kpi">
+          <div class="label">Neige naturelle</div>
+          <div class="value" id="kpi-natural">142<span class="unit">j/an</span></div>
+          <div class="delta" id="kpi-natural-d">référence 2010</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Enneigement technique</div>
+          <div class="value warn" id="kpi-artificial">38<span class="unit">% pistes</span></div>
+          <div class="delta" id="kpi-artificial-d">référence 2010</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Consommation d'eau</div>
+          <div class="value" id="kpi-water">310<span class="unit">kilolitres/ha</span></div>
+          <div class="delta" id="kpi-water-d">par hectare enneigé</div>
+        </div>
+        <div class="kpi">
+          <div class="label">T° hivernale moy.</div>
+          <div class="value warn" id="kpi-temp">+0.9<span class="unit">°C</span></div>
+          <div class="delta" id="kpi-temp-d">vs. 1981–2010</div>
+        </div>
+      </div>
+
+      <svg class="chart-svg" id="chart-svg" viewBox="0 0 1200 300"></svg>
+
+      <div class="slider-row">
+        <div class="yr-current mono" id="yr-current">2010</div>
+        <div>
+          <input type="range" id="yr-slider" min="2010" max="2050" step="1" value="2010" aria-label="Année de projection, entre 2010 et 2050">
+          <div class="yr-scale">
+            <span>2010</span><span>2020</span><span>2030</span><span>2040</span><span>2050</span>
+          </div>
+        </div>
+        <button class="ctrl-btn" id="play-btn" aria-label="Lancer ou arrêter la lecture automatique">▶ &nbsp;LECTURE</button>
+      </div>
+
+      <div class="dynamic-comment" id="dyn-comment" aria-live="polite">
+        <span class="dc-label">État 2010</span>
+        Période de référence. Enneigement naturel largement dominant, recours au technique ≈ 38 % des pistes.
+      </div>
+    </div>
+
+    <!-- ENERGY PROFILE -->
+    <div style="margin-top:32px;" class="energy-grid">
+      <div class="energy-card">
+        <h4>Profil de consommation énergétique</h4>
+        <div class="sub">Répartition estimée · kWh annuels</div>
+        <div class="stacked-bar" id="bar-consumption"></div>
+        <div class="bar-legend" id="legend-consumption"></div>
+      </div>
+      <div class="energy-card">
+        <h4>Potentiel renouvelable local</h4>
+        <div class="sub">Mix substituable · horizon 2035</div>
+        <div class="stacked-bar" id="bar-renewable"></div>
+        <div class="bar-legend" id="legend-renewable"></div>
+      </div>
+    </div>
+
+    <div class="cite-row">
+      <div class="cite-card" data-tip="tip-rixen" tabindex="0" role="button" aria-label="Chiffre clé : 36 % de la consommation d'eau potable communale">
+        <div class="fig">36<span style="font-size:20px">%</span></div>
+        <div class="lbl">de la consommation communale d'eau potable (saison 2007, Davos) pouvait être attribuée à l'enneigement technique</div>
+        <div class="src">Rixen et al., 2011</div>
+      </div>
+      <div class="cite-card" data-tip="tip-water" tabindex="0" role="button" aria-label="Chiffre clé : 1 million de litres par hectare">
+        <div class="fig">1 M<span style="font-size:20px">L/ha</span></div>
+        <div class="lbl">d'eau typiquement nécessaires pour enneiger un hectare de piste sur une saison (~ 30 cm de base)</div>
+        <div class="src">Acad. sciences CH, 2019</div>
+      </div>
+      <div class="cite-card" data-tip="tip-elevation" tabindex="0" role="button" aria-label="Chiffre clé : élévation de l'isotherme 0°C">
+        <div class="fig">+650<span style="font-size:20px">m</span></div>
+        <div class="lbl">élévation possible de l'isotherme 0 °C hivernal en Suisse d'ici fin de siècle (850 m → ≈ 1 500 m)</div>
+        <div class="src">MétéoSuisse CH2018</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4 : MÉTHODE -->
+  <section id="methode">
+    <div class="section-head">
+      <div class="section-num">04 / MÉTHODE</div>
+      <div>
+        <h2 class="section-title">Périmètre, données et limites</h2>
+        <p class="section-sub">Cette infographie est un exercice pédagogique : elle applique le cadre Raworth à une étude de cas et ne constitue pas un audit de durabilité officiel de la station.</p>
+      </div>
+    </div>
+
+    <div class="method-grid">
+      <div class="method-card">
+        <span class="tag">Sélection des liens</span>
+        <h4>Trois dimensions retenues</h4>
+        <p>Parmi les 21 dimensions du Doughnut, trois ont été sélectionnées comme <em>structurellement liées</em> à l'exploitation du domaine skiable, selon deux critères cumulatifs :</p>
+        <ul>
+          <li>Lien causal direct avec l'activité (émissions, prélèvements, emploi)</li>
+          <li>Ordres de grandeur documentés dans la littérature alpine</li>
+        </ul>
+        <p style="margin-top:10px"><strong style="color:var(--amber)">Climat</strong> · <strong style="color:var(--amber)">Eau douce</strong> · <strong style="color:var(--glacier)">Revenus & travail</strong>.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="tag">Sources de données</span>
+        <h4>Primaires vs. estimées</h4>
+        <p><strong>Primaires (sourcées)</strong> : 225 km de pistes, 43 remontées, altitude, part hydraulique du mix suisse, 36 % Rixen et al., élévation isotherme CH2018.</p>
+        <p><strong>Estimées (ordre de grandeur)</strong> : répartition énergétique par poste, 6 GWh/an, 1,2 M journées-skieur, 30 000 lits, 2,3 kg CO₂e/journée-skieur. Ces valeurs suivent des fourchettes publiées pour des stations alpines comparables.</p>
+      </div>
+
+      <div class="method-card">
+        <span class="tag">Limites</span>
+        <h4>Ce que l'étude ne fait pas</h4>
+        <ul>
+          <li>La projection 2010–2050 est une courbe lissée illustrative, non une simulation CH2018 locale d'Arosa Lenzerheide</li>
+          <li>La boucle « climat → étiage » est qualitative, sans modèle hydrologique chiffré</li>
+          <li>Pas de comptabilité carbone scope 3 exhaustive (mobilité des touristes non ventilée)</li>
+          <li>Les dimensions sociales reposent sur des proxys cantonaux (OFS), non sur une enquête communale</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="biblio">
+      <h4>Bibliographie</h4>
+      <ol>
+        <li>Raworth, K. (2017). <em>Doughnut Economics : Seven Ways to Think Like a 21st-Century Economist</em>. Random House Business.</li>
+        <li>Rixen, C., Teich, M., Lardelli, C., Gallati, D., Pohl, M., Pütz, M., &amp; Bebi, P. (2011). Winter tourism and climate change in the Alps : an assessment of resource consumption, snow reliability, and future snowmaking potential. <em>Mountain Research and Development</em>, 31(3), 229–236. <a href="https://doi.org/10.1659/MRD-JOURNAL-D-10-00112.1" target="_blank" rel="noopener">DOI:10.1659/MRD-JOURNAL-D-10-00112.1</a></li>
+        <li>CH2018 Project Team (2018). <em>CH2018 – Climate Scenarios for Switzerland, Technical Report</em>. National Centre for Climate Services, Zurich. ISBN 978-3-9525031-4-0. <a href="https://www.nccs.admin.ch" target="_blank" rel="noopener">nccs.admin.ch</a></li>
+        <li>Académie suisse des sciences naturelles (SCNAT) (2019). <em>Le changement climatique en Suisse : indicateurs des causes, des effets et des mesures</em>. Berne.</li>
+        <li>Seilbahnen Schweiz / Remontées mécaniques suisses (2023). <em>Faits et chiffres de la branche 2023</em>. Berne. <a href="https://www.seilbahnen.org" target="_blank" rel="noopener">seilbahnen.org</a></li>
+        <li>Grünewald, T., Wolfsperger, F., &amp; Lehning, M. (2018). Snow farming : conserving snow over the summer season. <em>The Cryosphere</em>, 12, 385–400.</li>
+        <li>Spandre, P., François, H., Verfaillie, D., Lafaysse, M., Déqué, M., Eckert, N., George, E., &amp; Morin, S. (2019). Climate controls on snow reliability in French Alps ski resorts. <em>Scientific Reports</em>, 9, 8043. <a href="https://doi.org/10.1038/s41598-019-44068-8" target="_blank" rel="noopener">DOI:10.1038/s41598-019-44068-8</a></li>
+        <li>Office fédéral de la statistique (OFS) (2020). <em>Bâtiments et logements 2020 : résidences principales et secondaires</em>. Neuchâtel.</li>
+        <li>Grisons Tourisme · Arosa Lenzerheide (2024). Chiffres de domaine : 225 km de pistes, 43 remontées mécaniques, altitude 1 229–2 865 m. <a href="https://www.arosalenzerheide.swiss" target="_blank" rel="noopener">arosalenzerheide.swiss</a></li>
+        <li>Paccard, P. (2010). <em>Gestion durable de l'eau en montagne : le cas de la production de neige en stations de sports d'hiver</em>. Thèse de doctorat, Université de Savoie.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="bot">
+    <div class="refs">
+      <div><strong>Note —</strong> Cette infographie pédagogique a été produite dans le cadre du cours ENV-101 (EPFL, printemps 2026). Les sources primaires sont détaillées en section 04 ; les estimations pédagogiques y sont clairement signalées.</div>
+      <div style="margin-top:12px">Police : Inter, JetBrains Mono. Production HTML/CSS/JS autonome, sans dépendance JavaScript externe.</div>
+    </div>
+    <div style="text-align:right">
+      ENV-101 · EPFL<br>
+      Printemps 2026<br>
+      v2.0
+    </div>
+  </footer>
+</div>
+
+<div class="tip" id="tooltip"></div>
+
+<script>
+/* ========== DATA ========== */
+
+const DOUGHNUT_DATA = {
+  ceiling: [
+    { id: 'climate', label: 'Changement climatique', linked: true, desc: "Les émissions liées au transport des touristes, au damage, aux remontées et à la fabrication de neige alimentent le réchauffement qui, en retour, raccourcit la saison d'enneigement naturel (boucle de renforcement).", quant: "≈ 2,3 kg CO₂e / journée-skieur (estimation, h. transport longue distance)", cite: "Paccard, 2010 · Thèse Univ. Savoie" },
+    { id: 'freshwater', label: "Prélèvements d'eau douce", linked: true, desc: "La production de neige de culture consomme en moyenne ~1 million de litres d'eau par hectare et par saison (fourchette 0,5 à 4 selon les conditions). Les prélèvements saisonniers coïncident avec les débits d'étiage hivernaux des torrents alpins.", quant: "jusqu'à 36 % de l'eau potable communale (Davos, saison 2007)", cite: "Rixen et al., 2011 · Mt. Res. Dev. 31(3)" },
+    { id: 'biodiversity', label: 'Perte de biodiversité', linked: false, desc: "Le damage, l'installation de canons à neige et les retenues collinaires perturbent les habitats subalpins. La neige artificielle, plus dense, retarde la fonte et décale la phénologie végétale.", quant: "retard de fonte : 2–3 semaines", cite: "Rixen & Rolando, 2013" },
+    { id: 'landuse', label: 'Conversion des sols', linked: false, desc: "L'aménagement des pistes (nivellement, retenues d'eau, pylônes) a transformé durablement les versants. Les retenues représentent typiquement 2–5 ha par station d'ampleur moyenne.", quant: "retenues : 50 000 – 250 000 m³", cite: "Académie suisse des sciences, 2019" },
+    { id: 'airpol', label: 'Pollution atmosphérique', linked: false, desc: "Trafic automobile saisonnier (jusqu'à +300 % en haute saison), chaufferies des hébergements et dameuses diesel contribuent aux émissions locales de particules fines et de NOₓ.", quant: "pics hivernaux de PM10", cite: "OFEV, 2022" },
+    { id: 'ozone', label: "Couche d'ozone", linked: false, desc: "Dimension peu pertinente à l'échelle locale mais incluse pour l'intégrité du cadre Raworth.", quant: "—", cite: "Raworth, 2017" },
+    { id: 'chem', label: 'Pollution chimique', linked: false, desc: "Usage ponctuel de fartage, produits de damage, carburants et additifs de neige. Enjeu modéré mais cumulatif sur les sols et les eaux de ruissellement.", quant: "enjeu diffus", cite: "—" },
+    { id: 'nitrogen', label: 'Cycles N & P', linked: false, desc: "L'apport d'engrais sur les pistes pour stabiliser l'herbe après nivellement perturbe localement les cycles biogéochimiques.", quant: "fertilisation : < 50 kg N/ha", cite: "Rixen et al., 2003" },
+    { id: 'ocean', label: "Acidification des océans", linked: false, desc: "Dimension globale, non directement pilotable à l'échelle de la station, mais liée aux émissions touristiques agrégées.", quant: "—", cite: "Raworth, 2017" }
+  ],
+  foundation: [
+    { id: 'income', label: 'Revenus & travail', linked: true, desc: "Le tourisme d'hiver représente 40–60 % de l'emploi direct dans la commune. Emplois saisonniers, souvent précaires, dépendants d'une ressource climatique de plus en plus volatile.", quant: "≈ 1 300 ETP saisonniers", cite: "Seilbahnen Schweiz, 2023" },
+    { id: 'health', label: 'Santé', linked: false, desc: "Accès à une médecine de montagne, mais exposition accrue aux accidents de ski et aux aléas naturels.", quant: "—", cite: "—" },
+    { id: 'education', label: 'Éducation', linked: false, desc: "Scolarité obligatoire garantie ; enjeu de formation professionnelle adaptée à la diversification touristique post-carbone.", quant: "—", cite: "—" },
+    { id: 'housing', label: 'Logement', linked: false, desc: "Pression immobilière des résidences secondaires (Lex Weber) : 60 %+ des logements sont des lits froids, tensionnant l'accès au logement principal.", quant: "≈ 65 % rés. secondaires", cite: "OFS, 2020" },
+    { id: 'food', label: 'Alimentation', linked: false, desc: "Sécurité alimentaire garantie ; enjeu de circuits courts et de restauration d'altitude à faible empreinte.", quant: "—", cite: "—" },
+    { id: 'water', label: "Eau", linked: false, desc: "Approvisionnement domestique sécurisé, mais concurrence d'usage hivernale avec la production de neige en période d'étiage.", quant: "—", cite: "—" },
+    { id: 'energy', label: 'Énergie', linked: false, desc: "Électricité largement hydraulique (CH ≈ 57 % hydro). La dépendance aux remontées mécaniques à 5–7 GWh/an par station reste un point de vigilance.", quant: "≈ 6 GWh/an", cite: "Seilbahnen, 2023" },
+    { id: 'networks', label: 'Réseaux', linked: false, desc: "Connectivité numérique et transports publics saisonniers performants.", quant: "—", cite: "—" },
+    { id: 'voice', label: 'Voix politique', linked: false, desc: "Démocratie communale directe ; assemblées citoyennes sur les grands projets d'aménagement.", quant: "—", cite: "—" },
+    { id: 'peace', label: 'Paix & justice', linked: false, desc: "Cadre institutionnel stable.", quant: "—", cite: "—" },
+    { id: 'equity', label: 'Équité sociale', linked: false, desc: "Tensions croissantes entre résidents et touristes fortunés ; pouvoir d'achat local sous pression.", quant: "—", cite: "OFS, 2022" },
+    { id: 'gender', label: 'Égalité de genre', linked: false, desc: "Emploi saisonnier genré : hôtellerie féminisée, pisteurs masculins.", quant: "—", cite: "—" }
+  ]
+};
+
+/* ========== DOUGHNUT SVG ========== */
+
+const donutSvg = document.getElementById('doughnut-svg');
+const detailCard = document.getElementById('detail-card');
+
+const CEILING_INNER = 175, CEILING_OUTER = 230;
+const FOUND_INNER = 88, FOUND_OUTER = 145;
+
+function polar(cx, cy, r, a) {
+  return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+}
+function arcPath(cx, cy, rIn, rOut, a0, a1) {
+  const [x0, y0] = polar(cx, cy, rOut, a0);
+  const [x1, y1] = polar(cx, cy, rOut, a1);
+  const [x2, y2] = polar(cx, cy, rIn, a1);
+  const [x3, y3] = polar(cx, cy, rIn, a0);
+  const large = (a1 - a0) > Math.PI ? 1 : 0;
+  return `M ${x0} ${y0} A ${rOut} ${rOut} 0 ${large} 1 ${x1} ${y1} L ${x2} ${y2} A ${rIn} ${rIn} 0 ${large} 0 ${x3} ${y3} Z`;
+}
+function textArcPath(cx, cy, r, a0, a1) {
+  // Chemin invisible pour textPath, tracé selon milieu de l'arc
+  const [x0, y0] = polar(cx, cy, r, a0);
+  const [x1, y1] = polar(cx, cy, r, a1);
+  const large = (a1 - a0) > Math.PI ? 1 : 0;
+  return `M ${x0} ${y0} A ${r} ${r} 0 ${large} 1 ${x1} ${y1}`;
+}
+
+// Defs pour textPaths
+const donutDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+donutSvg.appendChild(donutDefs);
+
+function buildRing(items, rIn, rOut, cls, fillNormal, fillLinked) {
+  const n = items.length;
+  const step = (Math.PI * 2) / n;
+  const gap = 0.012;
+  const rText = (rIn + rOut) / 2;
+
+  items.forEach((it, i) => {
+    const a0 = -Math.PI / 2 + i * step + gap;
+    const a1 = -Math.PI / 2 + (i + 1) * step - gap;
+    const mid = (a0 + a1) / 2;
+
+    // Segment
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', arcPath(0, 0, rIn, rOut, a0, a1));
+    p.setAttribute('fill', it.linked ? fillLinked : fillNormal);
+    p.setAttribute('stroke', 'white');
+    p.setAttribute('stroke-width', '1.5');
+    p.setAttribute('class', 'donut-seg ' + cls);
+    p.setAttribute('tabindex', '0');
+    p.setAttribute('role', 'button');
+    p.setAttribute('aria-label',
+      `${cls === 'ceiling' ? 'Plafond écologique' : 'Plancher social'} — ${it.label}${it.linked ? ' (lien structurel)' : ''}`);
+    p.dataset.id = it.id;
+    p.dataset.ring = cls;
+    p.addEventListener('click', () => selectSegment(cls, it.id));
+    p.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectSegment(cls, it.id);
+      }
+    });
+    donutSvg.appendChild(p);
+
+    // Label courbé le long de l'arc
+    // On inverse le sens du chemin quand on est sur la moitié basse pour éviter le texte à l'envers
+    const isBottom = mid > 0 && mid < Math.PI;
+    const pathId = `arc-${cls}-${it.id}`;
+    let pathD;
+    if (isBottom) {
+      // Arc anti-horaire (de a1 vers a0) pour lisibilité
+      const [sx, sy] = polar(0, 0, rText - 2, a1);
+      const [ex, ey] = polar(0, 0, rText - 2, a0);
+      pathD = `M ${sx} ${sy} A ${rText - 2} ${rText - 2} 0 0 0 ${ex} ${ey}`;
+    } else {
+      pathD = textArcPath(0, 0, rText + 2, a0, a1);
+    }
+    const arcPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    arcPathEl.setAttribute('id', pathId);
+    arcPathEl.setAttribute('d', pathD);
+    arcPathEl.setAttribute('fill', 'none');
+    donutDefs.appendChild(arcPathEl);
+
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.setAttribute('class', 'donut-label' + (it.linked ? ' linked' : ''));
+    txt.setAttribute('dy', isBottom ? '3.5' : '3');
+    const tp = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
+    tp.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + pathId);
+    tp.setAttribute('href', '#' + pathId);
+    tp.setAttribute('startOffset', '50%');
+    tp.setAttribute('text-anchor', 'middle');
+    tp.textContent = it.label;
+    txt.appendChild(tp);
+    donutSvg.appendChild(txt);
+  });
+}
+
+// Center gap (resort)
+const centerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+centerCircle.setAttribute('r', FOUND_INNER - 4);
+centerCircle.setAttribute('fill', 'var(--navy-tint)');
+centerCircle.setAttribute('stroke', 'var(--navy)');
+centerCircle.setAttribute('stroke-width', '1');
+centerCircle.setAttribute('stroke-dasharray', '2 3');
+donutSvg.appendChild(centerCircle);
+
+// Foundation ring
+buildRing(DOUGHNUT_DATA.foundation, FOUND_INNER, FOUND_OUTER, 'foundation',
+  '#DDEEF3', '#4BACC6');
+// Middle band (safe space)
+const safe = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+safe.setAttribute('r', (FOUND_OUTER + CEILING_INNER) / 2);
+safe.setAttribute('fill', 'none');
+safe.setAttribute('stroke', '#F2EEDC');
+safe.setAttribute('stroke-width', CEILING_INNER - FOUND_OUTER);
+donutSvg.appendChild(safe);
+// Ceiling ring
+buildRing(DOUGHNUT_DATA.ceiling, CEILING_INNER, CEILING_OUTER, 'ceiling',
+  '#FBEFD6', '#E8A020');
+
+// Labels for rings
+function addRingTag(text, y) {
+  const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  t.setAttribute('class', 'ring-tag');
+  t.setAttribute('x', 0); t.setAttribute('y', y);
+  t.setAttribute('text-anchor', 'middle');
+  t.textContent = text;
+  donutSvg.appendChild(t);
+}
+
+// Center text
+const centerTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+centerTitle.setAttribute('class', 'donut-center-title');
+centerTitle.setAttribute('y', -4);
+centerTitle.textContent = 'Arosa';
+donutSvg.appendChild(centerTitle);
+const centerTitle2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+centerTitle2.setAttribute('class', 'donut-center-title');
+centerTitle2.setAttribute('y', 16);
+centerTitle2.textContent = 'Lenzerheide';
+donutSvg.appendChild(centerTitle2);
+const centerSub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+centerSub.setAttribute('class', 'donut-center-text');
+centerSub.setAttribute('y', 36);
+centerSub.textContent = 'LE SYSTÈME';
+donutSvg.appendChild(centerSub);
+
+/* ========== DOUGHNUT INTERACTION ========== */
+
+// Liste plate pour navigation séquentielle
+const FLAT_SEGMENTS = [
+  ...DOUGHNUT_DATA.ceiling.map(i => ({ ring: 'ceiling', id: i.id })),
+  ...DOUGHNUT_DATA.foundation.map(i => ({ ring: 'foundation', id: i.id }))
+];
+
+// Mapping doughnut → stocks systémiques pour synchronisation
+const DOUGHNUT_TO_STOCK = {
+  'climate': ['energy', 'snow'],
+  'freshwater': ['water'],
+  'income': ['tourists'],
+  'energy': ['energy'],
+  'water': ['water']
+};
+
+let currentSelection = null;
+
+function selectSegment(ring, id) {
+  const items = DOUGHNUT_DATA[ring === 'ceiling' ? 'ceiling' : 'foundation'];
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  currentSelection = { ring, id };
+
+  // Surbrillance dans le doughnut
+  document.querySelectorAll('.donut-seg').forEach(s => {
+    s.classList.remove('active');
+    s.classList.add('dim');
+  });
+  document.querySelectorAll(`.donut-seg[data-id="${id}"][data-ring="${ring}"]`).forEach(s => {
+    s.classList.add('active');
+    s.classList.remove('dim');
+  });
+
+  // Synchronisation avec diagramme système
+  highlightSystemForDoughnut(id);
+
+  renderDetail(ring, item);
+}
+
+function highlightSystemForDoughnut(donutId) {
+  // Réinitialiser
+  document.querySelectorAll('.stock-node').forEach(n => n.classList.remove('highlight'));
+  document.querySelectorAll('.flow-path').forEach(p => p.classList.remove('highlight'));
+
+  const stockIds = DOUGHNUT_TO_STOCK[donutId];
+  if (!stockIds) return;
+  stockIds.forEach(sid => {
+    const node = document.querySelector(`.stock-node[data-stock="${sid}"]`);
+    if (node) node.classList.add('highlight');
+    document.querySelectorAll(`.flow-path[data-from="${sid}"], .flow-path[data-to="${sid}"]`).forEach(p => {
+      p.classList.add('highlight');
+    });
+  });
+}
+
+function navSegment(delta) {
+  if (!currentSelection) return;
+  const idx = FLAT_SEGMENTS.findIndex(s =>
+    s.ring === currentSelection.ring && s.id === currentSelection.id);
+  if (idx === -1) return;
+  const nextIdx = Math.max(0, Math.min(FLAT_SEGMENTS.length - 1, idx + delta));
+  const next = FLAT_SEGMENTS[nextIdx];
+  selectSegment(next.ring, next.id);
+  // Remettre le focus sur le segment correspondant
+  const el = document.querySelector(`.donut-seg[data-id="${next.id}"][data-ring="${next.ring}"]`);
+  if (el) el.focus();
+}
+
+function renderDetail(ring, item) {
+  if (ring === 'intro') {
+    detailCard.innerHTML = `
+      <span class="detail-tag" style="color:var(--navy);border-color:var(--navy)">Introduction</span>
+      <h3 class="detail-title">${item.label}</h3>
+      <div class="detail-quant mono">${item.quant || '—'}</div>
+      <div class="detail-body"><p>${item.desc}</p></div>
+      <div class="detail-cite">Source · ${item.cite || '—'}</div>
+    `;
+    return;
+  }
+  const tagCls = ring === 'ceiling' ? 'ceiling' : 'foundation';
+  const tagTxt = ring === 'ceiling' ? 'Plafond écologique' : 'Plancher social';
+  const curIdx = FLAT_SEGMENTS.findIndex(s => s.ring === ring && s.id === item.id);
+  detailCard.innerHTML = `
+    <span class="detail-tag ${tagCls}">${tagTxt}</span>
+    ${item.linked ? '<span class="detail-tag linked" style="margin-left:6px">Lien structurel</span>' : ''}
+    <h3 class="detail-title">${item.label}</h3>
+    <div class="detail-quant mono">${item.quant || '—'}</div>
+    <div class="detail-body"><p>${item.desc}</p></div>
+    ${item.linked ? '<div class="detail-link-note">Cette dimension est l\'une des trois retenues comme lien direct avec l\'exploitation du domaine skiable, et structure l\'analyse systémique ci-dessous.</div>' : ''}
+    <div class="detail-cite">Source · ${item.cite || '—'}</div>
+    <div class="detail-nav">
+      <button id="nav-prev" ${curIdx <= 0 ? 'disabled' : ''} aria-label="Segment précédent">← Précédent</button>
+      <button id="nav-next" ${curIdx >= FLAT_SEGMENTS.length - 1 ? 'disabled' : ''} aria-label="Segment suivant">Suivant →</button>
+    </div>
+  `;
+  const prev = document.getElementById('nav-prev');
+  const next = document.getElementById('nav-next');
+  if (prev) prev.addEventListener('click', () => navSegment(-1));
+  if (next) next.addEventListener('click', () => navSegment(1));
+}
+
+// Initial state
+renderDetail('intro', {
+  label: 'Sélectionnez une dimension',
+  quant: 'Anneau externe = plafond écologique · Anneau interne = plancher social',
+  desc: "Le Doughnut définit un espace « juste et sûr pour l'humanité » : au-dessus du plancher social (besoins humains satisfaits), en-dessous du plafond écologique (limites planétaires respectées). Les dimensions <strong>orangées</strong> et <strong>bleues foncées</strong> sont structurellement liées à l'exploitation du domaine skiable d'Arosa Lenzerheide.",
+  cite: "Raworth, 2017"
+});
+
+/* ========== FILTRE DOUGHNUT ========== */
+
+function applyFilter(filter) {
+  const segs = document.querySelectorAll('.donut-seg');
+  segs.forEach(s => {
+    s.classList.remove('dim', 'active');
+    const ring = s.dataset.ring;
+    const id = s.dataset.id;
+    const items = DOUGHNUT_DATA[ring];
+    const item = items.find(i => i.id === id);
+
+    let visible = true;
+    if (filter === 'linked') visible = !!(item && item.linked);
+    else if (filter === 'ceiling') visible = (ring === 'ceiling');
+    else if (filter === 'foundation') visible = (ring === 'foundation');
+
+    if (!visible) s.classList.add('dim');
+  });
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilter(btn.dataset.filter);
+    currentSelection = null;
+    // Si filtre liens structurels, afficher le message intro adapté
+    if (btn.dataset.filter === 'linked') {
+      renderDetail('intro', {
+        label: 'Trois liens structurels',
+        quant: 'Climat · Eau douce · Revenus & travail',
+        desc: "Ces trois dimensions, deux du plafond écologique et une du plancher social, sont retenues comme <strong>directement pilotables</strong> à l'échelle du domaine skiable. Elles structurent l'analyse systémique de la section suivante (02 / SYSTÈME).",
+        cite: "Sélection pédagogique — voir section 04 / MÉTHODE"
+      });
+    }
+  });
+});
+
+/* ========== SYSTEMS DIAGRAM ========== */
+
+const sysSvg = document.getElementById('systems-svg');
+
+function sysEl(tag, attrs, text) {
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text) e.textContent = text;
+  return e;
+}
+
+// Define arrow marker
+const defs = sysEl('defs');
+function marker(id, color) {
+  const m = sysEl('marker', { id, viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto' });
+  m.appendChild(sysEl('path', { d: 'M 0 0 L 10 5 L 0 10 z', fill: color }));
+  return m;
+}
+defs.appendChild(marker('arrow-amber', '#E8A020'));
+defs.appendChild(marker('arrow-glacier', '#4BACC6'));
+defs.appendChild(marker('arrow-ink', '#333333'));
+sysSvg.appendChild(defs);
+
+// 4 stock positions avec identifiants pour synchronisation doughnut
+const STOCKS = [
+  { id: 'snow',     x: 120, y: 80,  w: 200, h: 90, title: 'Neige sur pistes',   val: '≈ 225 km pistes · sat. 70 %',   fill: 0.55, warm: false },
+  { id: 'water',    x: 880, y: 80,  w: 200, h: 90, title: "Réservoir d'eau",    val: '≈ 250 000 m³ · retenues',       fill: 0.62, warm: false },
+  { id: 'energy',   x: 120, y: 370, w: 200, h: 90, title: 'Énergie consommée',  val: '≈ 6 GWh/an',                     fill: 0.70, warm: true  },
+  { id: 'tourists', x: 880, y: 370, w: 200, h: 90, title: 'Skieurs / saison',   val: '≈ 1,2 M journées-skieur',       fill: 0.80, warm: false }
+];
+
+STOCKS.forEach(s => {
+  const g = sysEl('g', {
+    class: 'stock-node' + (s.warm ? ' warming' : ''),
+    transform: `translate(${s.x},${s.y})`,
+    tabindex: '0',
+    role: 'img',
+    'aria-label': `Stock : ${s.title}, ${s.val}`
+  });
+  g.dataset.stock = s.id;
+  g.appendChild(sysEl('rect', { x: 0, y: 0, width: s.w, height: s.h }));
+  // fill bar avec id pour mise à jour dynamique
+  g.appendChild(sysEl('rect', {
+    x: 4, y: s.h - 8, width: (s.w - 8) * s.fill, height: 4,
+    class: 'stock-bar' + (s.warm ? ' warm' : ''),
+    id: `stock-bar-${s.id}`
+  }));
+  g.appendChild(sysEl('text', { class: 'stock-title', x: 14, y: 28 }, s.title));
+  g.appendChild(sysEl('text', { class: 'stock-value mono', x: 14, y: 48, id: `stock-val-${s.id}` }, s.val));
+  g.appendChild(sysEl('text', { class: 'mono', x: 14, y: 66, 'font-size': '9', fill: '#6B6B6B' }, 'STOCK ' + s.id.toUpperCase()));
+  sysSvg.appendChild(g);
+});
+
+// Central hub (resort) — rosace 4 branches
+const hub = sysEl('g', { transform: 'translate(600, 270)' });
+// Cercle fond navy
+hub.appendChild(sysEl('circle', { r: 70, fill: '#1F4E79' }));
+// 4 branches (rosace) répondant aux 4 stocks aux angles
+const branches = [
+  { a: -Math.PI / 2 },  // haut (snow et water)
+  { a: 0 },              // droite (water et tourists)
+  { a: Math.PI / 2 },    // bas (energy et tourists)
+  { a: Math.PI }         // gauche (snow et energy)
+];
+branches.forEach(b => {
+  const x1 = 62 * Math.cos(b.a), y1 = 62 * Math.sin(b.a);
+  const x2 = 78 * Math.cos(b.a), y2 = 78 * Math.sin(b.a);
+  hub.appendChild(sysEl('line', {
+    x1, y1, x2, y2,
+    stroke: '#1F4E79', 'stroke-width': '2', 'stroke-linecap': 'round', opacity: '0.5'
+  }));
+});
+hub.appendChild(sysEl('circle', { r: 60, fill: 'white', stroke: '#1F4E79', 'stroke-width': '1' }));
+hub.appendChild(sysEl('text', { class: 'stock-title', x: 0, y: -8, 'text-anchor': 'middle' }, 'Domaine'));
+hub.appendChild(sysEl('text', { class: 'stock-title', x: 0, y: 8, 'text-anchor': 'middle' }, 'skiable'));
+hub.appendChild(sysEl('text', { class: 'mono', x: 0, y: 28, 'text-anchor': 'middle', 'font-size': '9', fill: '#6B6B6B' }, "HUB D'EXPLOITATION"));
+sysSvg.appendChild(hub);
+
+// Flows : chemins corrigés pour ne pas pénétrer dans les rectangles et éviter le hub
+const FLOWS = [
+  // Water -> Snow (snowmaking) : pompage depuis réservoir vers canons
+  { d: 'M 880 110 C 700 40, 500 40, 320 110',
+    from: 'water', to: 'snow',
+    type: 'neutral', label: 'pompage → canons', lx: 600, ly: 45, animated: true },
+
+  // Snow -> Tourists (attractiveness) : arc par le bas, contournant le hub
+  { d: 'M 260 170 C 320 430, 600 460, 880 440',
+    from: 'snow', to: 'tourists',
+    type: 'balancing', label: 'offre de ski', lx: 420, ly: 425, animated: true },
+
+  // Tourists -> Energy (demand) : passe AU-DESSUS du hub (label au-dessus, pas dans)
+  { d: 'M 980 370 C 980 195, 320 195, 220 370',
+    from: 'tourists', to: 'energy',
+    type: 'reinforcing', label: 'demande remontées + hébergement', lx: 600, ly: 185, animated: true },
+
+  // Energy -> Snow (snowmaking energy) — boucle R climatique (côté gauche)
+  { d: 'M 220 370 C 90 285, 90 200, 220 170',
+    from: 'energy', to: 'snow',
+    type: 'reinforcing', label: 'fabrication neige', lx: 78, ly: 270, animated: true },
+
+  // Tourists -> Water (consumption domestique) — côté droit
+  { d: 'M 1080 410 C 1180 300, 1180 180, 1080 140',
+    from: 'tourists', to: 'water',
+    type: 'balancing', label: 'usage domestique', lx: 1180, ly: 270, animated: false },
+
+  // Energy -> Water (via réchauffement, étiage) — arc par le bas, flèche s'arrête AU-DESSUS du rectangle water
+  { d: 'M 320 415 C 440 500, 760 500, 980 172',
+    from: 'energy', to: 'water',
+    type: 'reinforcing', label: 'climat ↑ → étiage ↑', lx: 650, ly: 505, animated: true }
+];
+
+FLOWS.forEach(f => {
+  const markerRef = f.type === 'reinforcing' ? 'arrow-amber' : f.type === 'balancing' ? 'arrow-glacier' : 'arrow-ink';
+  const p = sysEl('path', {
+    d: f.d,
+    class: 'flow-path ' + f.type + (f.animated ? ' flow-animated' : ''),
+    'marker-end': `url(#${markerRef})`
+  });
+  p.dataset.from = f.from;
+  p.dataset.to = f.to;
+  sysSvg.appendChild(p);
+  // label bg (fond blanc pour lisibilité)
+  const labelW = f.label.length * 5.8 + 14;
+  sysSvg.appendChild(sysEl('rect', { x: f.lx - labelW/2, y: f.ly - 9, width: labelW, height: 14, fill: 'white', stroke: 'none' }));
+  const txt = sysEl('text', { class: 'flow-label mono', x: f.lx, y: f.ly + 1, 'text-anchor': 'middle' }, f.label);
+  txt.dataset.flow = `${f.from}-${f.to}`;
+  sysSvg.appendChild(txt);
+});
+
+// Loop badges
+function loopBadge(cx, cy, letter, label, color) {
+  const g = sysEl('g', { transform: `translate(${cx},${cy})` });
+  g.appendChild(sysEl('circle', { r: 22, fill: 'white', stroke: color, 'stroke-width': '1.5' }));
+  g.appendChild(sysEl('text', { class: 'loop-badge', x: 0, y: 5, 'text-anchor': 'middle', fill: color, 'font-size': '16', 'font-weight': '600' }, letter));
+  g.appendChild(sysEl('text', { class: 'flow-label', x: 0, y: 40, 'text-anchor': 'middle', fill: color, 'font-weight': '600' }, label));
+  sysSvg.appendChild(g);
+}
+loopBadge(170, 250, 'R', 'Boucle climat', '#E8A020');
+loopBadge(1030, 250, 'B', 'Boucle offre/demande', '#4BACC6');
+
+/* ========== TIMELINE CHART ========== */
+
+const YEARS = [];
+for (let y = 2010; y <= 2050; y++) YEARS.push(y);
+
+function projData(year) {
+  const t = (year - 2010) / 40;
+  // Jours de neige naturelle (>30 cm) : 142 -> 82. Courbe lissée CH2018 RCP4.5
+  const natural = Math.round(142 - 60 * Math.pow(t, 1.1));
+  // Part pistes enneigées techniquement : 38 % -> 78 %
+  const artificial = Math.round(38 + 40 * Math.pow(t, 0.9));
+  // Eau consommée par ha enneigé (kL/ha/saison)
+  const water = Math.round(310 + 190 * t);
+  // Anomalie T° hivernale vs 1981-2010 (°C)
+  const temp = (0.9 + 2.1 * t).toFixed(1);
+  return { natural, artificial, water, temp };
+}
+
+// Calcul de l'année de basculement (natural < artificial * coef)
+function findTippingYear() {
+  for (let y = 2010; y <= 2050; y++) {
+    const d = projData(y);
+    // Critère : jours de neige naturelle < 50 % du % de pistes enneigées techniquement (indicateur de dépendance structurelle)
+    if (d.natural < d.artificial * 1.5) return y;
+  }
+  return null;
+}
+const TIPPING_YEAR = findTippingYear();
+
+const chartSvg = document.getElementById('chart-svg');
+const CW = 1200, CH = 300, pad = { l: 56, r: 56, t: 20, b: 40 };
+
+// Échelle Y gauche : 60 → 160 (axis break symbolique, plus lisible)
+const Y_MIN = 60, Y_MAX = 160;
+
+function drawChart() {
+  chartSvg.innerHTML = '';
+  const innerW = CW - pad.l - pad.r;
+  const innerH = CH - pad.t - pad.b;
+
+  // Grid + axes (5 graduations : 160, 140, 120, 100, 80, 60)
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.t + (innerH * i) / 5;
+    const val = Y_MAX - (Y_MAX - Y_MIN) * i / 5;
+    chartSvg.appendChild(sysEl('line', { x1: pad.l, y1: y, x2: CW - pad.r, y2: y, class: 'grid-line' }));
+    chartSvg.appendChild(sysEl('text', { class: 'axis-label', x: pad.l - 8, y: y + 3, 'text-anchor': 'end' }, `${val}`));
+  }
+  // right axis (%) : 100, 80, 60, 40, 20, 0
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.t + (innerH * i) / 5;
+    chartSvg.appendChild(sysEl('text', { class: 'axis-label', x: CW - pad.r + 8, y: y + 3, 'text-anchor': 'start' }, `${100 - 20 * i}%`));
+  }
+  chartSvg.appendChild(sysEl('text', { class: 'axis-label', x: pad.l - 8, y: pad.t - 6, 'text-anchor': 'end' }, 'jours'));
+  chartSvg.appendChild(sysEl('text', { class: 'axis-label', x: CW - pad.r + 8, y: pad.t - 6, 'text-anchor': 'start' }, '% pistes'));
+
+  // Symbole axis break sur l'axe Y gauche (zigzag discret)
+  const axBreakY = CH - pad.b - 4;
+  chartSvg.appendChild(sysEl('path', {
+    d: `M ${pad.l - 4} ${axBreakY - 3} L ${pad.l + 1} ${axBreakY - 1} L ${pad.l - 4} ${axBreakY + 1} L ${pad.l + 1} ${axBreakY + 3}`,
+    stroke: '#6B6B6B', 'stroke-width': '1', fill: 'none'
+  }));
+
+  // Scales
+  const scaleY1 = v => pad.t + innerH * (1 - (v - Y_MIN) / (Y_MAX - Y_MIN));
+  const scaleY2 = v => pad.t + innerH * (1 - v / 100);
+  const scaleX = y => pad.l + ((y - 2010) / 40) * innerW;
+
+  // Zone de basculement (fond grisé orangé à partir de TIPPING_YEAR)
+  if (TIPPING_YEAR) {
+    chartSvg.appendChild(sysEl('rect', {
+      x: scaleX(TIPPING_YEAR),
+      y: pad.t,
+      width: scaleX(2050) - scaleX(TIPPING_YEAR),
+      height: innerH,
+      class: 'area-tipping'
+    }));
+    chartSvg.appendChild(sysEl('text', {
+      class: 'axis-label',
+      x: scaleX(TIPPING_YEAR) + 6,
+      y: pad.t + 14,
+      fill: '#E8A020',
+      'font-weight': '600'
+    }, `Zone de dépendance structurelle (dès ${TIPPING_YEAR})`));
+  }
+
+  // Marqueurs jalons politiques
+  const MILESTONES = [
+    { year: 2030, label: 'Accord de Paris · jalon -55 % UE' },
+    { year: 2040, label: 'Stratégie CH 2050 · étape intermédiaire' }
+  ];
+  MILESTONES.forEach(m => {
+    const x = scaleX(m.year);
+    chartSvg.appendChild(sysEl('line', {
+      x1: x, y1: pad.t, x2: x, y2: CH - pad.b,
+      class: 'milestone-marker'
+    }));
+    chartSvg.appendChild(sysEl('text', {
+      class: 'milestone-label',
+      x: x + 4,
+      y: CH - pad.b - 6,
+      'text-anchor': 'start'
+    }, m.label));
+  });
+
+  // x axis
+  chartSvg.appendChild(sysEl('line', { x1: pad.l, y1: CH - pad.b, x2: CW - pad.r, y2: CH - pad.b, class: 'axis-line' }));
+  [2010, 2020, 2030, 2040, 2050].forEach(y => {
+    const x = scaleX(y);
+    chartSvg.appendChild(sysEl('line', { x1: x, y1: CH - pad.b, x2: x, y2: CH - pad.b + 4, class: 'axis-line' }));
+    chartSvg.appendChild(sysEl('text', { class: 'axis-label', x, y: CH - pad.b + 18, 'text-anchor': 'middle' }, y));
+  });
+
+  // Natural area
+  let naturalPath = `M ${scaleX(2010)} ${CH - pad.b} `;
+  YEARS.forEach(y => {
+    const d = projData(y);
+    naturalPath += `L ${scaleX(y)} ${scaleY1(d.natural)} `;
+  });
+  naturalPath += `L ${scaleX(2050)} ${CH - pad.b} Z`;
+  chartSvg.appendChild(sysEl('path', { d: naturalPath, class: 'area-natural' }));
+
+  // Artificial area
+  let artPath = `M ${scaleX(2010)} ${CH - pad.b} `;
+  YEARS.forEach(y => {
+    const d = projData(y);
+    artPath += `L ${scaleX(y)} ${scaleY2(d.artificial)} `;
+  });
+  artPath += `L ${scaleX(2050)} ${CH - pad.b} Z`;
+  chartSvg.appendChild(sysEl('path', { d: artPath, class: 'area-artificial' }));
+
+  // Natural line
+  let nl = '';
+  YEARS.forEach((y, i) => {
+    const d = projData(y);
+    nl += (i === 0 ? 'M ' : 'L ') + scaleX(y) + ' ' + scaleY1(d.natural) + ' ';
+  });
+  chartSvg.appendChild(sysEl('path', { d: nl, class: 'line-natural' }));
+
+  // Artificial line
+  let al = '';
+  YEARS.forEach((y, i) => {
+    const d = projData(y);
+    al += (i === 0 ? 'M ' : 'L ') + scaleX(y) + ' ' + scaleY2(d.artificial) + ' ';
+  });
+  chartSvg.appendChild(sysEl('path', { d: al, class: 'line-artificial' }));
+
+  // Labels
+  chartSvg.appendChild(sysEl('text', { class: 'mono', x: scaleX(2012), y: scaleY1(projData(2012).natural) - 10, 'font-size': '11', fill: '#4BACC6', 'font-weight': '600' }, 'Neige naturelle (j/an)'));
+  chartSvg.appendChild(sysEl('text', { class: 'mono', x: scaleX(2038), y: scaleY2(projData(2038).artificial) - 10, 'font-size': '11', fill: '#E8A020', 'font-weight': '600' }, 'Enneigement tech. (%)'));
+
+  // Crosshair + dot for current year
+  currentYearOverlay();
+}
+
+let currentYear = 2010;
+let lastKPI = null;  // pour le tween
+
+// Tween simple : interpolation linéaire sur 220 ms
+function tweenValue(elemId, from, to, suffix, decimals) {
+  const el = document.getElementById(elemId);
+  if (!el || from === to) {
+    if (el) el.innerHTML = `${decimals > 0 ? to.toFixed(decimals) : to}<span class="unit">${suffix}</span>`;
+    return;
+  }
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    el.innerHTML = `${decimals > 0 ? to.toFixed(decimals) : to}<span class="unit">${suffix}</span>`;
+    return;
+  }
+  const duration = 220;
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const v = from + (to - from) * t;
+    el.innerHTML = `${decimals > 0 ? v.toFixed(decimals) : Math.round(v)}<span class="unit">${suffix}</span>`;
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// Commentaire dynamique : messages contextuels selon l'année
+function dynCommentFor(year, d) {
+  const ref = projData(2010);
+  if (year === 2010) {
+    return {
+      label: 'État 2010',
+      text: "Période de référence. Enneigement naturel largement dominant, recours au technique ≈ 38 % des pistes.",
+      warn: false
+    };
+  }
+  if (year <= 2020) {
+    return {
+      label: `${year} · observé`,
+      text: `Légère tendance à la baisse des jours de neige naturelle. Le seuil de réchauffement régional atteint ${d.temp} °C (vs 1981–2010).`,
+      warn: false
+    };
+  }
+  if (year <= 2030) {
+    return {
+      label: `${year} · horizon proche`,
+      text: `Couverture neigeuse naturelle en recul de ${ref.natural - d.natural} jours. Accélération de l'enneigement technique : ${d.artificial} % des pistes. Jalon Paris −55 %.`,
+      warn: false
+    };
+  }
+  if (TIPPING_YEAR && year >= TIPPING_YEAR) {
+    return {
+      label: `${year} · zone critique`,
+      text: `Dépendance structurelle à l'enneigement technique : la neige naturelle ne suffit plus à compenser les pistes non techniques. Consommation d'eau : +${d.water - ref.water} kL/ha.`,
+      warn: true
+    };
+  }
+  return {
+    label: `${year} · horizon lointain`,
+    text: `Seuil de fiabilité de plus en plus précaire pour les altitudes < 1 500 m. Arosa (1 800 m+) reste dans la zone fiable ; Lenzerheide-village (1 470 m) devient marginal.`,
+    warn: year >= 2040
+  };
+}
+
+function currentYearOverlay() {
+  // remove previous overlays
+  [...chartSvg.querySelectorAll('.overlay')].forEach(n => n.remove());
+
+  const innerW = CW - pad.l - pad.r;
+  const innerH = CH - pad.t - pad.b;
+  const scaleY1 = v => pad.t + innerH * (1 - (v - Y_MIN) / (Y_MAX - Y_MIN));
+  const scaleY2 = v => pad.t + innerH * (1 - v / 100);
+  const scaleX = y => pad.l + ((y - 2010) / 40) * innerW;
+
+  const d = projData(currentYear);
+  const x = scaleX(currentYear);
+  chartSvg.appendChild(sysEl('line', { class: 'year-marker overlay', x1: x, y1: pad.t, x2: x, y2: CH - pad.b }));
+  chartSvg.appendChild(sysEl('circle', { class: 'overlay', cx: x, cy: scaleY1(d.natural), r: 5, fill: '#4BACC6', stroke: 'white', 'stroke-width': 2 }));
+  chartSvg.appendChild(sysEl('circle', { class: 'overlay', cx: x, cy: scaleY2(d.artificial), r: 5, fill: '#E8A020', stroke: 'white', 'stroke-width': 2 }));
+
+  // KPIs avec tween numérique
+  const prev = lastKPI || projData(2010);
+  tweenValue('kpi-natural', prev.natural, d.natural, 'j/an', 0);
+  tweenValue('kpi-artificial', prev.artificial, d.artificial, '% pistes', 0);
+  tweenValue('kpi-water', prev.water, d.water, 'kL/ha', 0);
+  tweenValue('kpi-temp', parseFloat(prev.temp), parseFloat(d.temp), '°C', 1);
+  // Le + devant le temp
+  setTimeout(() => {
+    const tempEl = document.getElementById('kpi-temp');
+    if (tempEl && !tempEl.innerHTML.startsWith('+')) {
+      tempEl.innerHTML = '+' + tempEl.innerHTML;
+    }
+  }, 230);
+  lastKPI = d;
+
+  const ref = projData(2010);
+  document.getElementById('kpi-natural-d').textContent = `Δ ${d.natural - ref.natural} j vs. 2010`;
+  document.getElementById('kpi-artificial-d').textContent = `Δ +${d.artificial - ref.artificial} pts vs. 2010`;
+  document.getElementById('kpi-water-d').textContent = `Δ +${d.water - ref.water} kL vs. 2010`;
+  document.getElementById('kpi-temp-d').textContent = `Δ +${(d.temp - ref.temp).toFixed(1)} °C vs. 2010`;
+  document.getElementById('yr-current').textContent = currentYear;
+
+  // Commentaire dynamique
+  const cmt = dynCommentFor(currentYear, d);
+  const cmtEl = document.getElementById('dyn-comment');
+  if (cmtEl) {
+    cmtEl.classList.toggle('warning', cmt.warn);
+    cmtEl.innerHTML = `<span class="dc-label">${cmt.label}</span>${cmt.text}`;
+  }
+
+  // Synchronisation stock "Neige sur pistes" : transition glacier → amber quand natural < 100 j
+  const snowBar = document.getElementById('stock-bar-snow');
+  const snowVal = document.getElementById('stock-val-snow');
+  if (snowBar) {
+    // Remplissage décroît avec la neige naturelle
+    const newFill = Math.max(0.15, Math.min(0.70, d.natural / 142 * 0.70));
+    snowBar.setAttribute('width', (200 - 8) * newFill);
+    // Couleur : vire à amber quand natural < 100
+    if (d.natural < 100) {
+      snowBar.setAttribute('fill', '#E8A020');
+    } else {
+      snowBar.setAttribute('fill', '#4BACC6');
+    }
+  }
+  if (snowVal) {
+    snowVal.textContent = `${d.natural} j neige · tech. ${d.artificial} %`;
+  }
+
+  // Mise à jour du label du flux "pompage → canons" avec volume courant
+  const pumpLabel = document.querySelector('text[data-flow="water-snow"]');
+  if (pumpLabel) {
+    pumpLabel.textContent = `pompage → canons · ${d.water} kL/ha`;
+  }
+}
+
+drawChart();
+currentYearOverlay();
+
+/* ========== SLIDER + PLAY ========== */
+
+const slider = document.getElementById('yr-slider');
+slider.addEventListener('input', e => {
+  currentYear = +e.target.value;
+  currentYearOverlay();
+});
+
+let playing = false, playTimer = null;
+const playBtn = document.getElementById('play-btn');
+playBtn.addEventListener('click', () => {
+  playing = !playing;
+  if (playing) {
+    playBtn.textContent = '❚❚  PAUSE';
+    playBtn.classList.add('playing');
+    if (currentYear >= 2050) { currentYear = 2010; slider.value = 2010; currentYearOverlay(); }
+    playTimer = setInterval(() => {
+      currentYear++;
+      if (currentYear > 2050) { currentYear = 2050; clearInterval(playTimer); playing = false; playBtn.textContent = '▶  LECTURE'; playBtn.classList.remove('playing'); }
+      slider.value = currentYear;
+      currentYearOverlay();
+    }, 220);
+  } else {
+    playBtn.textContent = '▶  LECTURE';
+    playBtn.classList.remove('playing');
+    clearInterval(playTimer);
+  }
+});
+
+/* ========== ENERGY BARS ========== */
+
+const CONSUMPTION = [
+  { label: 'Remontées mécaniques', pct: 42, color: '#1F4E79', tip: 'Téléphériques, télésièges, tapis. Principal poste électrique.' },
+  { label: 'Enneigement technique', pct: 27, color: '#4BACC6', tip: 'Compresseurs + pompage. Fortement saisonnier (nov.-déc.).' },
+  { label: 'Hébergement / chauffage', pct: 18, color: '#E8A020', tip: "Hôtels, appartements, restaurants d'altitude. Gaz + mazout encore présents." },
+  { label: 'Damage', pct: 9, color: '#C97F10', tip: 'Dameuses diesel, ≈ 3 l/h, usage nocturne.' },
+  { label: 'Autres (transport, ateliers)', pct: 4, color: '#6B6B6B', tip: 'Navettes, véhicules techniques, ateliers.' }
+];
+
+const RENEWABLE = [
+  { label: 'Hydroélectricité (réseau CH)', pct: 48, color: '#1F4E79', tip: 'Mix suisse actuel. Base largement décarbonée mais contrainte en étiage hivernal.' },
+  { label: 'Solaire PV sur stations sommitales', pct: 22, color: '#E8A020', tip: 'Facettes sud des stations d\'altitude : productivité hivernale accrue (réflexion neige).' },
+  { label: 'Solaire PV toitures hôtelières', pct: 14, color: '#F2C77B', tip: 'Potentiel estimé sur bâti existant.' },
+  { label: 'Stockage pompé-turbiné local', pct: 10, color: '#4BACC6', tip: 'Usage des retenues existantes pour stockage énergétique saisonnier.' },
+  { label: 'Biomasse résiduelle (forêt)', pct: 6, color: '#8FAE6B', tip: 'Bois-énergie local pour chaleur. Potentiel modéré.' }
+];
+
+function renderBar(containerId, legendId, data) {
+  const bar = document.getElementById(containerId);
+  const leg = document.getElementById(legendId);
+  bar.innerHTML = '';
+  leg.innerHTML = '';
+  data.forEach(d => {
+    const seg = document.createElement('div');
+    seg.style.width = d.pct + '%';
+    seg.style.background = d.color;
+    seg.dataset.tip = d.tip;
+    seg.dataset.label = d.label + ' · ' + d.pct + '%';
+    bar.appendChild(seg);
+
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<span class="sw" style="background:${d.color}"></span><span>${d.label}</span><span class="pc">${d.pct}%</span>`;
+    leg.appendChild(row);
+  });
+}
+renderBar('bar-consumption', 'legend-consumption', CONSUMPTION);
+renderBar('bar-renewable', 'legend-renewable', RENEWABLE);
+
+/* ========== TOOLTIPS ========== */
+
+const tooltip = document.getElementById('tooltip');
+
+function showTip(html, x, y) {
+  tooltip.innerHTML = html;
+  // Flip vers le bas si proche du haut de l'écran (< 120 px)
+  const flipDown = y < 120;
+  tooltip.classList.toggle('flip-down', flipDown);
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+  tooltip.classList.add('visible');
+}
+function hideTip() { tooltip.classList.remove('visible'); }
+
+// Energy bar tooltips (y compris clavier)
+document.querySelectorAll('.stacked-bar div').forEach(seg => {
+  seg.setAttribute('tabindex', '0');
+  seg.setAttribute('role', 'img');
+  seg.setAttribute('aria-label', seg.dataset.label);
+  seg.addEventListener('mousemove', e => {
+    showTip(`<div class="tip-val">${seg.dataset.label}</div><div>${seg.dataset.tip}</div>`, e.clientX, e.clientY);
+  });
+  seg.addEventListener('mouseleave', hideTip);
+  seg.addEventListener('focus', e => {
+    const r = seg.getBoundingClientRect();
+    showTip(`<div class="tip-val">${seg.dataset.label}</div><div>${seg.dataset.tip}</div>`, r.left + r.width / 2, r.top);
+  });
+  seg.addEventListener('blur', hideTip);
+});
+
+// Citations tooltips — sources alignées avec la bibliographie
+const CITE_TIPS = {
+  'tip-rixen': {
+    val: "36 % · Davos, saison 2007",
+    body: "Étude de trois stations suisses : l'eau de fabrication de neige a représenté jusqu'à 36 % de la consommation d'eau potable de la commune de Davos lors de la saison 2007. Indicateur central de concurrence d'usage hivernale dans les Alpes.",
+    src: "Rixen et al. (2011). Mountain Research & Development, 31(3), 229–236. DOI:10.1659/MRD-JOURNAL-D-10-00112.1"
+  },
+  'tip-water': {
+    val: "≈ 1 M L / ha / saison",
+    body: "Consommation moyenne indicative pour produire une base d'environ 30 cm de neige de culture sur un hectare de piste, incluant les pertes par évaporation et sublimation. Fourchette 0,5 à 4 selon conditions.",
+    src: "SCNAT (2019). Le changement climatique en Suisse : indicateurs des causes, effets et mesures."
+  },
+  'tip-elevation': {
+    val: "Isotherme 0 °C · 850 → ~1 500 m",
+    body: "En scénario RCP 8.5 sans mesure de protection, l'isotherme du zéro degré hivernal en Suisse pourrait s'élever d'environ 850 m actuellement à près de 1 500 m d'ici la fin du siècle, soit ~ +650 m.",
+    src: "CH2018 Project Team (2018). MétéoSuisse / EPFZ."
+  }
+};
+
+document.querySelectorAll('.cite-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const t = CITE_TIPS[card.dataset.tip];
+    if (!t) return;
+    showTip(`<div class="tip-val">${t.val}</div><div>${t.body}</div><div class="tip-src">${t.src}</div>`, e.clientX, e.clientY);
+  });
+  card.addEventListener('mouseleave', hideTip);
+  card.addEventListener('focus', e => {
+    const t = CITE_TIPS[card.dataset.tip];
+    if (!t) return;
+    const r = card.getBoundingClientRect();
+    showTip(`<div class="tip-val">${t.val}</div><div>${t.body}</div><div class="tip-src">${t.src}</div>`, r.left + r.width / 2, r.top);
+  });
+  card.addEventListener('blur', hideTip);
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const t = CITE_TIPS[card.dataset.tip];
+      if (!t) return;
+      const r = card.getBoundingClientRect();
+      showTip(`<div class="tip-val">${t.val}</div><div>${t.body}</div><div class="tip-src">${t.src}</div>`, r.left + r.width / 2, r.top);
+    }
+  });
+});
+
+// Doughnut tooltips on hover (short)
+document.querySelectorAll('.donut-seg').forEach(seg => {
+  seg.addEventListener('mousemove', e => {
+    const id = seg.dataset.id;
+    const ring = seg.dataset.ring;
+    const items = DOUGHNUT_DATA[ring === 'ceiling' ? 'ceiling' : 'foundation'];
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    const tag = ring === 'ceiling' ? 'Plafond écologique' : 'Plancher social';
+    showTip(`<div class="tip-val">${tag}${item.linked ? ' · Lien structurel' : ''}</div><strong>${item.label}</strong><div style="margin-top:4px;opacity:0.85">${item.quant || ''}</div>`, e.clientX, e.clientY);
+  });
+  seg.addEventListener('mouseleave', hideTip);
+});
+
+// Stock node tooltips + clic = sélection doughnut si mapping existe
+const STOCK_TO_DOUGHNUT = {
+  'snow': { ring: 'ceiling', id: 'freshwater' },
+  'water': { ring: 'ceiling', id: 'freshwater' },
+  'energy': { ring: 'ceiling', id: 'climate' },
+  'tourists': { ring: 'foundation', id: 'income' }
+};
+document.querySelectorAll('.stock-node').forEach(node => {
+  node.addEventListener('mousemove', e => {
+    const title = node.querySelector('.stock-title').textContent;
+    const val = node.querySelector('.stock-value').textContent;
+    showTip(`<div class="tip-val">STOCK</div><strong>${title}</strong><div style="margin-top:4px;opacity:0.85">${val}</div>`, e.clientX, e.clientY);
+  });
+  node.addEventListener('mouseleave', hideTip);
+  node.addEventListener('click', () => {
+    const sid = node.dataset.stock;
+    const m = STOCK_TO_DOUGHNUT[sid];
+    if (m) {
+      selectSegment(m.ring, m.id);
+      document.getElementById('doughnut').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+  node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      node.click();
+    }
+  });
+});
+
+/* ========== TOOLBAR : PRINT, CSV, PRÉSENTATION ========== */
+
+document.getElementById('btn-print').addEventListener('click', () => {
+  window.print();
+});
+
+document.getElementById('btn-csv').addEventListener('click', () => {
+  // Génère un CSV des projections 2010-2050
+  let csv = 'year,natural_snow_days,artificial_snow_coverage_pct,water_kL_per_ha,winter_temp_anomaly_C\n';
+  for (let y = 2010; y <= 2050; y++) {
+    const d = projData(y);
+    csv += `${y},${d.natural},${d.artificial},${d.water},${d.temp}\n`;
+  }
+  // En-tête méta
+  const meta = `# Projections pédagogiques Arosa Lenzerheide 2010-2050
+# Courbes lissées illustratives fondées sur les messages clés CH2018 RCP 4.5
+# Généré : ${new Date().toISOString().slice(0, 10)}
+# Source cadre : Raworth (2017) - Doughnut Economics
+# Infographie ENV-101 · EPFL · Printemps 2026
+`;
+  const blob = new Blob([meta + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'arosa-lenzerheide-projections-2010-2050.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+const presentBtn = document.getElementById('btn-present');
+let presentMode = false;
+function togglePresent() {
+  presentMode = !presentMode;
+  document.body.classList.toggle('presentation-mode', presentMode);
+  presentBtn.textContent = presentMode ? '✕ Quitter présentation' : '▶ Présentation';
+  if (presentMode && document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else if (!presentMode && document.fullscreenElement && document.exitFullscreen) {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+presentBtn.addEventListener('click', togglePresent);
+
+/* ========== RACCOURCIS CLAVIER GLOBAUX ========== */
+
+// Sections pour navigation ← →
+const SECTIONS = ['doughnut', 'systeme', 'timeline', 'methode'];
+
+document.addEventListener('keydown', e => {
+  // Ne pas intercepter si focus dans un input, textarea, ou contrôle de range
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+  // F : bascule mode présentation
+  if (e.key === 'f' || e.key === 'F') {
+    e.preventDefault();
+    togglePresent();
+    return;
+  }
+  // Esc : quitter présentation
+  if (e.key === 'Escape' && presentMode) {
+    togglePresent();
+    return;
+  }
+  // ← → : naviguer entre sections
+  if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+    const delta = e.key === 'ArrowRight' ? 1 : -1;
+    // Trouver la section actuellement la plus visible
+    let currentIdx = 0;
+    let bestDelta = Infinity;
+    SECTIONS.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const d = Math.abs(r.top);
+      if (d < bestDelta) { bestDelta = d; currentIdx = i; }
+    });
+    const nextIdx = Math.max(0, Math.min(SECTIONS.length - 1, currentIdx + delta));
+    const target = document.getElementById(SECTIONS[nextIdx]);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+});
+</script>
+</body>
+</html>
